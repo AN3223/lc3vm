@@ -1,15 +1,20 @@
+// Maximum possible value to store within a u16
 pub const U16_MAX: usize = 1 << 16;
 
+// Represents the whole LC-3
+// (maybe won't represent it with a struct in the future?)
 pub struct LC3 {
     pub memory: [u16; U16_MAX],
     pub registers: [u16; 10]
 }
 
+// All registers
 pub enum Register {
     RR0, RR1, RR2, RR3, RR4,
     RR5, RR6, RR7, RPC, RCOND
 }
 
+// All opcodes
 pub enum OP {
     BR, ADD, LD, ST, JSR, AND, LDR, STR,
     RTI, NOT, LDI, STI, JMP, RES, LEA, TRAP
