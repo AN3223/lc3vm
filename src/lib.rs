@@ -17,21 +17,6 @@ pub mod consts {
 
 use consts::*;
 
-// Represents the whole LC-3
-pub struct LC3 {
-    pub memory: [u16; U16_MAX],
-    pub registers: [u16; 10]
-}
-
-impl LC3 {
-    fn new() -> LC3 {
-        LC3 {
-            memory: DEFAULT_MEMORY,
-            registers: DEFAULT_REGISTERS
-        }
-    }
-}
-
 // All registers
 pub enum Register {
     RR0, RR1, RR2, RR3, RR4,
@@ -49,4 +34,19 @@ pub enum FL {
     POS = 1 << 0,
     ZRO = 1 << 1,
     NEG = 1 << 2
+}
+
+// Represents the whole LC-3
+pub struct LC3 {
+    pub memory: [u16; U16_MAX],
+    pub registers: [u16; 10]
+}
+
+impl LC3 {
+    pub const fn new() -> LC3 {
+        LC3 {
+            memory: DEFAULT_MEMORY,
+            registers: DEFAULT_REGISTERS
+        }
+    }
 }
