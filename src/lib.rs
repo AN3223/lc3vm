@@ -20,6 +20,12 @@ pub enum FL {
     NEG = 1 << 2
 }
 
+// Memory mapped registers
+pub enum MR {
+    KBSR = 0xFE00, // Keyboard status
+    KBDR = 0xFE02 // Keyboard data
+}
+
 // Represents the whole LC-3
 pub struct LC3 {
     pub memory: [u16; U16_MAX],
