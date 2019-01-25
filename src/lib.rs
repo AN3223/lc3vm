@@ -20,6 +20,13 @@ pub enum OP {
     RTI, NOT, LDI, STI, JMP, RES, LEA, TRAP
 }
 
+// Condition flags
+pub enum FL {
+    POS = 1 << 0,
+    ZRO = 1 << 1,
+    NEG = 1 << 2
+}
+
 #[cfg(test)]
 pub mod tests {
     use crate::*;
@@ -63,10 +70,19 @@ pub mod tests {
         assert_eq!(OP::TRAP as u16, 15);
     }
 
-    // Ensures that U16_MAX is the maximum
-    // possible u16 value
+    // Ensures the condition flags properly
+    // cast into u16 values
+    #[test]
+    fn condition_flags_as_u16() {
+        assert_eq!(FL::POS as u16, 1);
+        assert_eq!(FL::ZRO as u16, 2);
+        assert_eq!(FL::NEG as u16, 4);
+    }
+
+    // Ensures that U16_MAX really is the
+    // maximum possible u16 value
     #[test]
     fn correct_u16_max() {
-        assert_eq!(U16_MAX, 65536);
+        assert_eq!(U16_MAX, 65536);      
     }
 }
