@@ -1,5 +1,4 @@
 use lc3vm::*;
-use lc3vm::consts::U16_MAX;
 use lc3vm::Register::*;
 
 // Tests that the Register enums

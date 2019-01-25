@@ -1,21 +1,5 @@
-// Broken off into a module since it's unlikely
-// there would be a need to import these,
-// but it's public just in case the need arises
-pub mod consts {
-    // Maximum possible value to store within a u16
-    pub const U16_MAX: usize = 1 << 16;
-
-    // Default program counter state
-    pub const PC_START: u16 = 0x3000;
-
-    // Default state for the registers
-    pub const DEFAULT_REGISTERS: [u16; 10] = [0,0,0,0,0,0,0,0,PC_START,0];
-
-    // Default memory state (all 0's)
-    pub const DEFAULT_MEMORY: [u16; U16_MAX] = [0; U16_MAX];
-}
-
-use consts::*;
+// Maximum possible value to store within a u16
+pub const U16_MAX: usize = 1 << 16;
 
 // All registers
 pub enum Register {
@@ -45,8 +29,8 @@ pub struct LC3 {
 impl LC3 {
     pub const fn new() -> LC3 {
         LC3 {
-            memory: DEFAULT_MEMORY,
-            registers: DEFAULT_REGISTERS
+            memory: [0; U16_MAX],
+            registers: [0,0,0,0,0,0,0,0,0x3000,0]
         }
     }
 }
