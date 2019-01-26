@@ -40,3 +40,26 @@ impl LC3 {
         }
     }
 }
+
+// TODO: Document these binary functions better, they're freaking Klingon
+
+// Returns a bool based on whether the number given
+// represents a negative number or not
+const fn is_negative(x: u16, bit_count: u16) -> bool {
+    (x >> (bit_count - 1)) & 1 == 1
+}
+
+// Gives the two's complement for a number
+const fn complement(x: u16, bit_count: u16) -> u16 {
+    x | (0xFFFF << bit_count)
+}
+
+// Extends a number out from bit_count to 16 bits while
+// retaining its sign
+fn sign_extend(x: u16, bit_count: u16) -> u16 {
+    if is_negative(x, bit_count) {
+        complement(x, bit_count)
+    } else {
+        x
+    }
+}
