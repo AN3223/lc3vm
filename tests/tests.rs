@@ -25,6 +25,36 @@ fn test_flags() {
     );
 }
 
+#[test]
+fn test_flag_setting() {
+    let mut lc3 = LC3::new();
+    
+    // Test ZRO
+    lc3.update_rcond(0);
+    assert_eq!(
+        lc3.registers[RCOND as usize],
+        FL::ZRO as u16
+    );
+
+    // Test NEG
+    let negative_num = 0b1111111111111111;
+    lc3.registers[0] = negative_num;
+    lc3.update_rcond(0);
+    assert_eq!(
+        lc3.registers[RCOND as usize],
+        FL::NEG as u16
+    );
+
+    // Test POS
+    let positive_num = 0b0111111111111111;
+    lc3.registers[0] = positive_num;
+    lc3.update_rcond(0);
+    assert_eq!(
+        lc3.registers[RCOND as usize],
+        FL::POS as u16
+    );
+}
+
 
 // Tests that the Register enums
 // correctly cast into u16 values
