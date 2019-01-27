@@ -1,6 +1,8 @@
 use lc3vm::*;
 use lc3vm::Register::*;
 
+const NEGATIVE_NUM: u16 = 0b1111111111111111;
+const POSITIVE_NUM: u16 = 0b0111111111111111;
 
 #[test]
 fn test_flags() {
@@ -11,16 +13,14 @@ fn test_flags() {
     );
 
     // Test NEG
-    let negative_num = 0b1111111111111111;
     assert_eq!(
-        FL::from(negative_num) as u16,
+        FL::from(NEGATIVE_NUM) as u16,
         FL::NEG as u16
     );
 
     // Test POS
-    let positive_num = 0b0111111111111111;
     assert_eq!(
-        FL::from(positive_num) as u16,
+        FL::from(POSITIVE_NUM) as u16,
         FL::POS as u16
     );
 }
@@ -37,8 +37,7 @@ fn test_flag_setting() {
     );
 
     // Test NEG
-    let negative_num = 0b1111111111111111;
-    lc3.registers[0] = negative_num;
+    lc3.registers[0] = NEGATIVE_NUM;
     lc3.update_rcond(0);
     assert_eq!(
         lc3.registers[RCOND as usize],
@@ -46,15 +45,13 @@ fn test_flag_setting() {
     );
 
     // Test POS
-    let positive_num = 0b0111111111111111;
-    lc3.registers[0] = positive_num;
+    lc3.registers[0] = POSITIVE_NUM;
     lc3.update_rcond(0);
     assert_eq!(
         lc3.registers[RCOND as usize],
         FL::POS as u16
     );
 }
-
 
 // Tests that the Register enums
 // correctly cast into u16 values
