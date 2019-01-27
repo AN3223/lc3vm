@@ -41,12 +41,15 @@ impl LC3 {
     }
 }
 
-// TODO: Document these binary functions better, they're freaking Klingon
-
 // Returns a bool based on whether the number given
 // represents a negative number or not
 const fn is_negative(x: u16, bit_count: u16) -> bool {
     (x >> (bit_count - 1)) & 1 == 1
+}
+
+// Shorthand for is_negative(x, 16)
+const fn is_negative_u16(x: u16) -> bool {
+    is_negative(x, 16)
 }
 
 // Gives the two's complement for a number
