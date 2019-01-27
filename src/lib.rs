@@ -17,10 +17,10 @@ pub enum OP {
 
 // Condition flags
 pub enum FL {
-    POS = 1 << 0,
-    ZRO = 1 << 1,
-    NEG = 1 << 2
-}  // TODO: Remove bitshifting from this enum
+    POS = 1,
+    ZRO = 2,
+    NEG = 4
+}
 
 // Memory mapped registers
 pub enum MR {
