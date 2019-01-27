@@ -4,8 +4,9 @@ use lc3vm::Register::*;
 const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
 
+// Test flag (FL) functionality
 #[test]
-fn test_flags() {
+fn flags() {
     // Test ZRO
     assert_eq!(
         FL::from(0) as u16,
@@ -25,8 +26,9 @@ fn test_flags() {
     );
 }
 
+// Test LC3's flag-setting functionality
 #[test]
-fn test_flag_setting() {
+fn flag_setting() {
     let mut lc3 = LC3::new();
     
     // Test ZRO
