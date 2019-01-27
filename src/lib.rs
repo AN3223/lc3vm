@@ -55,8 +55,8 @@ impl LC3 {
     }
 
     // Updates RCOND based on the value of a given register
-    pub fn update_rcond(&mut self, register: u16) {
-        let register_val = self.registers[register as usize];
+    pub fn update_rcond(&mut self, register: usize) {
+        let register_val = self.registers[register];
         self.registers[RCOND as usize] = FL::from(register_val) as u16;
     }
 }
