@@ -6,21 +6,21 @@ use lc3vm::Register::*;
 fn test_flags() {
     // Test ZRO
     assert_eq!(
-        flag(0) as u16,
+        FL::from(0) as u16,
         FL::ZRO as u16
     );
 
     // Test NEG
     let negative_num = 0b1111111111111111;
     assert_eq!(
-        flag(negative_num) as u16,
+        FL::from(negative_num) as u16,
         FL::NEG as u16
     );
 
     // Test POS
     let positive_num = 0b0111111111111111;
     assert_eq!(
-        flag(positive_num) as u16,
+        FL::from(positive_num) as u16,
         FL::POS as u16
     );
 }

@@ -22,6 +22,18 @@ pub enum FL {
     NEG = 4
 }
 
+impl From<u16> for FL {
+    fn from(register_val: u16) -> FL {
+        if register_val == 0 {
+            FL::ZRO
+        } else if is_negative_u16(register_val) {
+            FL::NEG
+        } else {
+            FL::POS
+        }
+    }
+}
+
 // Memory mapped registers
 pub enum MR {
     KBSR = 0xFE00, // Keyboard status
@@ -45,20 +57,9 @@ impl LC3 {
     // Updates RCOND based on the value of a given register
     pub fn update_rcond(&mut self, register: u16) {
         let register_val = self.registers[register as usize];
-        self.registers[RCOND as usize] = flag(register_val) as u16;
+        self.registers[RCOND as usize] = FL::from(register_val) as u16;
     }
 }
-
-// Takes a value and returns a flag indicating if it is negative/zero/positive
-pub fn flag(register_val: u16) -> FL {
-    if register_val == 0 {
-        FL::ZRO
-    } else if is_negative_u16(register_val) {
-        FL::NEG
-    } else {
-        FL::POS
-    }
-}  // TODO: Make this part of the FL enum
 
 
 // Returns a bool based on whether the number given
