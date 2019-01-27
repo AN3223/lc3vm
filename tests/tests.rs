@@ -4,6 +4,24 @@ use lc3vm::Register::*;
 const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
 
+#[test]
+fn add() {
+    let mut lc3 = LC3::new();
+
+    // 15 + 0
+    let instruction: u16 = 0b0001_000_001_1_01111;
+    lc3.add(instruction);
+    assert_eq!(lc3.registers[0], 15);
+    assert_eq!(FL::from(&lc3), FL::POS);
+
+    // 15 + 15
+    let instruction: u16 = 0b0001_001_000_0_00_000;
+    lc3.add(instruction);
+    assert_eq!(lc3.registers[1], 30);
+    assert_eq!(FL::from(&lc3), FL::POS);
+}
+
+
 // Test flag (FL) functionality
 #[test]
 fn flags() {
