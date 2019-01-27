@@ -64,8 +64,8 @@ pub fn flag(register_val: u16) -> FL {
 // Returns a bool based on whether the number given
 // represents a negative number or not
 pub const fn is_negative(x: u16, bit_count: u16) -> bool {
-    (x >> (bit_count - 1)) & 1 == 1
-}  // TODO: Remove bitwise AND operation
+    x >> (bit_count - 1) == 1
+}
 
 // Gives the two's complement for a number
 pub const fn complement(x: u16, bit_count: u16) -> u16 {
