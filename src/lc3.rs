@@ -21,24 +21,16 @@ impl LC3 {
     }
 
     pub fn add(&mut self, instruction: u16) {
-        // Destination register, this is where the
-        // result of the calculation goes
-        let destination = (instruction >> 9) & 0x7;
+        let destination = (instruction >> 9) & 0x7; // Destination register
+        let sr1 = (instruction >> 6) & 0x7; // First operand
 
-        // SR1 is always the first operand
-        let sr1 = (instruction >> 6) & 0x7;
-
-        // immflag determines what the second operand is
-        let immflag = (instruction >> 5) & 0x1;
-
-        // So depending on the encoding, that could be imm5 or SR2
+        let immflag = (instruction >> 5) & 0x1; // Determines what the second operand is
         let operand = {
             if immflag == 1 {
                 // imm5 is 5 bits, so we extract those bits and sign_extend them
                 sign_extend(instruction & 0x1F, 5)
             } else {
-                // SR2
-                self.registers[(instruction & 0x7) as usize]
+                self.registers[(instruction & 0x7) as usize] // SR2
             }
         };
 
@@ -47,7 +39,6 @@ impl LC3 {
             self.registers[sr1 as usize] + operand
         };
 
-        // And then RCOND is updated
         self.update_rcond(destination as usize);
     }
 }
