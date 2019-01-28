@@ -1,5 +1,4 @@
 use lc3vm::*;
-use lc3vm::Register::*;
 
 const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
@@ -51,26 +50,17 @@ fn flag_setting() {
     
     // Test ZRO
     lc3.update_rcond(0);
-    assert_eq!(
-        lc3.registers[RCOND as usize],
-        FL::ZRO as u16
-    );
+    assert_eq!(FL::from(&lc3), FL::ZRO);
 
     // Test NEG
     lc3.registers[0] = NEGATIVE_NUM;
     lc3.update_rcond(0);
-    assert_eq!(
-        lc3.registers[RCOND as usize],
-        FL::NEG as u16
-    );
+    assert_eq!(FL::from(&lc3), FL::NEG);
 
     // Test POS
     lc3.registers[0] = POSITIVE_NUM;
     lc3.update_rcond(0);
-    assert_eq!(
-        lc3.registers[RCOND as usize],
-        FL::POS as u16
-    );
+    assert_eq!(FL::from(&lc3), FL::POS);
 }
 
 // Ensures that U16_MAX really is the
