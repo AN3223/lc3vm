@@ -95,11 +95,11 @@ pub fn sign_extend_u16(x: u16) -> u16 {
     sign_extend(x, 16)
 }
 
-const STDIN: i32 = 0;
+const STDIN_FD: i32 = 0;
 
 pub fn get_key(tx: &mut Sender<u16>, termios: &mut Termios) {
     termios.c_lflag &= !(ICANON | ECHO);
-    tcsetattr(STDIN, TCSANOW, termios).unwrap();
+    tcsetattr(STDIN_FD, TCSANOW, termios).unwrap();
     // Sets up the terminal to be able to
     // give individual characters w/o linebreaks
 
@@ -114,7 +114,7 @@ pub fn get_key(tx: &mut Sender<u16>, termios: &mut Termios) {
 }
 
 pub fn check_key() -> u16 {
-    let termios = Termios::from_fd(STDIN).unwrap();
+    let termios = Termios::from_fd(STDIN_FD).unwrap();
     // STDIN's original state
 
     let (mut tx, rx) = channel();
@@ -128,7 +128,7 @@ pub fn check_key() -> u16 {
     // Considers get_key() failed if the Receiver is empty when the timeout is over
     // so the program will not hang forever waiting input
     
-    tcsetattr(STDIN, TCSANOW, &termios).unwrap();
+    tcsetattr(STDIN_FD, TCSANOW, &termios).unwrap();
     // Return STDIN to its original state,
     // regardless of get_key()'s result
 
