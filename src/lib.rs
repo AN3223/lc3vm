@@ -1,6 +1,14 @@
 mod lc3;
 pub use lc3::LC3;
 
+extern crate termios;
+use std::io;
+use std::io::{Read};
+use termios::{Termios, TCSANOW, ECHO, ICANON, tcsetattr};
+use std::sync::mpsc::{Sender, channel};
+use std::thread;
+use std::time::Duration;
+
 // Maximum possible value to store within a u16
 pub const U16_MAX: usize = 1 << 16;
 
@@ -85,4 +93,32 @@ pub const fn is_negative_u16(x: u16) -> bool {
 // Short for sign_extend(x, 16)
 pub fn sign_extend_u16(x: u16) -> u16 {
     sign_extend(x, 16)
+}
+
+pub fn get_key(tx: &mut Sender<u16>) {
+    let stdin = 0;
+    let termios = Termios::from_fd(stdin).unwrap();
+    let mut new_termios = termios.clone();
+    
+    new_termios.c_lflag &= !(ICANON | ECHO);
+    tcsetattr(stdin, TCSANOW, &mut new_termios).unwrap();
+    
+    let mut buffer = [0];
+    io::stdin().read_exact(&mut buffer).unwrap();
+
+    tcsetattr(stdin, TCSANOW, &termios).unwrap();
+
+    tx.send(buffer[0] as u16).unwrap();
+}
+
+pub fn check_key() -> u16 {
+    let (mut tx, rx) = channel();
+    thread::spawn(move || {get_key(&mut tx)});
+    
+    let timeout = Duration::from_millis(5000);
+    let key = rx.recv_timeout(timeout);
+    match key {
+        Ok(character) => character,
+        Err(_) => 0
+    }
 }
