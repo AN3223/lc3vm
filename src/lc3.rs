@@ -60,4 +60,8 @@ impl LC3 {
 
         self.update_rcond(destination as usize);
     }
+
+    pub fn ldi(&mut self, instruction: u16) {
+        
+    }
 }
