@@ -1,4 +1,4 @@
-use crate::{U16_MAX, RCOND, FL, sign_extend};
+use crate::{U16_MAX, RCOND, FL, sign_extend, check_key, MR};
 
 // Represents the whole LC-3
 pub struct LC3 {
@@ -20,6 +20,25 @@ impl LC3 {
         self.registers[RCOND as usize] = FL::from(register_val) as u16;
     }
 
+    // Getter for accessing the memory. The memory only
+    // needs to be accessed through this getter if the
+    // address could be MR::KBSR.
+
+    // Otherwise, directly indexing into the memory is
+    // perfectly acceptable.
+    pub fn get_memory(&mut self, address: usize) -> u16 {
+        if address == MR::KBSR as usize {
+            let key = check_key();
+            if key != 0 {
+                self.memory[MR::KBSR as usize] = 1 << 15;
+                self.memory[MR::KBDR as usize] = key;
+            } else {
+                self.memory[MR::KBSR as usize] = 0;
+            }
+        }
+        self.memory[address]
+    }
+
     pub fn add(&mut self, instruction: u16) {
         let destination = (instruction >> 9) & 0x7; // Destination register
         let sr1 = (instruction >> 6) & 0x7; // First operand
@@ -27,8 +46,8 @@ impl LC3 {
         let immflag = (instruction >> 5) & 0x1; // Determines what the second operand is
         let operand = {
             if immflag == 1 {
-                // imm5 is 5 bits, so we extract those bits and sign_extend them
                 sign_extend(instruction & 0x1F, 5)
+                // imm5 is 5 bits, so we extract those bits and sign_extend them
             } else {
                 self.registers[(instruction & 0x7) as usize] // SR2
             }
