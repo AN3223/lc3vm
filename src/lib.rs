@@ -92,12 +92,7 @@ pub const fn is_negative_u16(x: u16) -> bool {
 
 const STDIN_FD: i32 = 0;
 
-pub fn get_key(tx: &mut Sender<u16>, termios: &mut Termios) {
-    termios.c_lflag &= !(ICANON | ECHO);
-    tcsetattr(STDIN_FD, TCSANOW, termios).unwrap();
-    // Sets up the terminal to be able to
-    // give individual characters w/o linebreaks
-
+pub fn get_key(tx: &mut Sender<u16>) {
     let mut buffer = [0];
     io::stdin().read_exact(&mut buffer).unwrap();
     // Reads a single character to the buffer from STDIN
@@ -111,10 +106,18 @@ pub fn get_key(tx: &mut Sender<u16>, termios: &mut Termios) {
 pub fn check_key() -> u16 {
     let termios = Termios::from_fd(STDIN_FD).unwrap();
     // STDIN's original state
+    
+    let mut new_termios = termios.clone();
+    // STDIN's new state that will be modified
+
+    new_termios.c_lflag &= !(ICANON | ECHO);
+    tcsetattr(STDIN_FD, TCSANOW, &new_termios).unwrap();
+    // Sets up the terminal to be able to
+    // give individual characters w/o linebreaks
 
     let (mut tx, rx) = channel();
     thread::spawn(move || {
-        get_key(&mut tx, &mut termios.clone())
+        get_key(&mut tx)
     });
     // Spawn get_key() in a new thread
 
