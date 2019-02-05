@@ -90,11 +90,6 @@ pub const fn is_negative_u16(x: u16) -> bool {
     is_negative(x, 16)
 }
 
-// Short for sign_extend(x, 16)
-pub fn sign_extend_u16(x: u16) -> u16 {
-    sign_extend(x, 16)
-}
-
 const STDIN_FD: i32 = 0;
 
 pub fn get_key(tx: &mut Sender<u16>, termios: &mut Termios) {
