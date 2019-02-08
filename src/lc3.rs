@@ -69,7 +69,8 @@ impl LC3 {
         let location = self.get_memory(
             (self.registers[RPC as usize] + pcoffset) as usize
         );
-        self.registers[pcoffset as usize] = self.get_memory(location as usize);
+
+        self.registers[destination_register as usize] = self.get_memory(location as usize);
 
         self.update_rcond(destination_register as usize);
     }
