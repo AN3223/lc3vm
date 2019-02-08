@@ -7,7 +7,7 @@ const POSITIVE_NUM: u16 = 0b0111111111111111;
 fn ldi() {
     let mut lc3 = LC3::new();
     lc3.memory[0x3000] = 500;
-    lc3.memory[500] = 1234;
+    lc3.memory[500] = 123;
 
     let instruction: u16 = 0b1010_000_000000000;
     // Tells the machine to look at memory address 0x3000 (the default RPC value),
@@ -16,14 +16,14 @@ fn ldi() {
     // Hence load "indirect"
 
     lc3.ldi(instruction);
-    assert_eq!(lc3.registers[0], 1234);
+    assert_eq!(lc3.registers[0], 123);
 
-    lc3.memory[0x3001] = 500;
-    lc3.memory[500] = 12345;
+    lc3.memory[0x3001] = 501;
+    lc3.memory[501] = 1234;
     let instruction: u16 = 0b1010_000_000000001;
 
     lc3.ldi(instruction);
-    assert_eq!(lc3.registers[0], 12345);
+    assert_eq!(lc3.registers[0], 1234);
 }
 
 #[test]
