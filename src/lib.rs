@@ -118,7 +118,7 @@ pub fn check_key() -> u16 {
     let (mut tx, rx) = channel();
     thread::spawn(move || {
         get_key(&mut tx)
-    });
+    }); // TODO: Implement this as a daemon?
     // Spawn get_key() in a new thread
 
     let timeout = Duration::from_millis(50);
