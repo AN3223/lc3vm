@@ -74,4 +74,25 @@ impl LC3 {
 
         self.update_rcond(destination_register as usize);
     }
+
+    pub fn and(&mut self, instruction: u16) {
+        let destination_register = instruction >> 9 & 0x7;
+        let sr1 = instruction >> 6 & 0x7; // First operand
+
+        let immflag = instruction >> 5 & 0x1; // Determines second operand
+        let operand = {
+            if immflag == 1 {
+                sign_extend(instruction & 0x1f, 5)
+            } else {
+                let sr2 = instruction & 0x7;
+                self.registers[sr2 as usize]
+            }
+        };
+
+        self.registers[destination_register as usize] = {
+            self.registers[sr1 as usize] & operand
+        };
+
+        self.update_rcond(destination_register as usize);
+    }
 }
