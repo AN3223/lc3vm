@@ -105,4 +105,13 @@ impl LC3 {
 
         self.update_rcond(destination_register);
     }
+
+    pub fn br(&mut self, instruction: u16) {
+        let pcoffset = sign_extend(instruction & 0x1ff, 9);
+        let cond_flag = instruction >> 9 & 7;
+
+        if cond_flag & self.register[RCOND as usize] == 1 {
+            self.register[RPC as usize] += pcoffset;
+        }
+    }
 }
