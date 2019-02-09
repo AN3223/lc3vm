@@ -3,6 +3,17 @@ use lc3vm::*;
 const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
 
+#[test]
+fn not() {
+    let mut lc3 = LC3::new();
+    lc3.register[0] = 0b1111;
+    
+    let instruction = 0b1001_000_000_1_11111;
+    lc3.not(instruction);
+
+    assert_eq!(FL::from(&lc3), FL::NEG);
+    assert_eq!(lc3.register[0], 0xffff - 15);
+}
 
 #[test]
 fn and() {

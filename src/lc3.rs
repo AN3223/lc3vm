@@ -96,4 +96,13 @@ impl LC3 {
 
         self.update_rcond(destination_register);
     }
+
+    pub fn not(&mut self, instruction: u16) {
+        let destination_register = (instruction >> 9 & 0x7) as usize;
+        let sr1 = (instruction >> 6 & 0x7) as usize;
+
+        self.register[destination_register] = !self.register[sr1];
+
+        self.update_rcond(destination_register);
+    }
 }
