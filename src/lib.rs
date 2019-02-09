@@ -37,7 +37,7 @@ pub enum FL {
 // Makes it easier to check the RCOND
 impl From<&LC3> for FL {
     fn from(lc3: &LC3) -> FL {
-        match lc3.registers[RCOND as usize] {
+        match lc3.register[RCOND as usize] {
             1 => FL::POS,
             2 => FL::ZRO,
             4 => FL::NEG,

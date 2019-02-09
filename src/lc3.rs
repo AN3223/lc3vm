@@ -4,21 +4,21 @@ use Register::*;
 // Represents the whole LC-3
 pub struct LC3 {
     pub memory: [u16; U16_MAX],
-    pub registers: [u16; 10]
+    pub register: [u16; 10]
 }
 
 impl LC3 {
     pub const fn new() -> LC3 {
         LC3 {
             memory: [0; U16_MAX],
-            registers: [0,0,0,0,0,0,0,0,0x3000,0]
+            register: [0,0,0,0,0,0,0,0,0x3000,0]
         }
     }
 
     // Updates RCOND based on the value of a given register
     pub fn update_rcond(&mut self, register: usize) {
-        let register_val = self.registers[register];
-        self.registers[RCOND as usize] = FL::from(register_val) as u16;
+        let register_val = self.register[register];
+        self.register[RCOND as usize] = FL::from(register_val) as u16;
     }
 
     // Getter for accessing the memory. The memory only
@@ -41,24 +41,25 @@ impl LC3 {
     }
 
     pub fn add(&mut self, instruction: u16) {
-        let destination_register = instruction >> 9 & 0x7;
-        let sr1 = instruction >> 6 & 0x7; // First operand
+        let destination_register = (instruction >> 9 & 0x7) as usize;
+        let sr1 = (instruction >> 6 & 0x7) as usize; // First operand
 
         let immflag = instruction >> 5 & 0x1; // Determines what the second operand is
         let operand = {
             if immflag == 1 {
                 sign_extend(instruction & 0x1F, 5)
             } else {
-                self.registers[(instruction & 0x7) as usize] // SR2
+                let sr2 = (instruction & 0x7) as usize;
+                self.register[sr2]
             }
         };
 
         // Here's where the actual addition happens
-        self.registers[destination_register as usize] = {
-            self.registers[sr1 as usize] + operand
+        self.register[destination_register] = {
+            self.register[sr1] + operand
         };
 
-        self.update_rcond(destination_register as usize);
+        self.update_rcond(destination_register);
     }
 
     // Load indirect
@@ -67,32 +68,32 @@ impl LC3 {
         let destination_register = instruction >> 9 & 0x7;
 
         let location = self.get_memory(
-            (self.registers[RPC as usize] + pcoffset) as usize
+            (self.register[RPC as usize] + pcoffset) as usize
         );
 
-        self.registers[destination_register as usize] = self.get_memory(location as usize);
+        self.register[destination_register as usize] = self.get_memory(location as usize);
 
         self.update_rcond(destination_register as usize);
     }
 
     pub fn and(&mut self, instruction: u16) {
-        let destination_register = instruction >> 9 & 0x7;
-        let sr1 = instruction >> 6 & 0x7; // First operand
+        let destination_register = (instruction >> 9 & 0x7) as usize;
+        let sr1 = (instruction >> 6 & 0x7) as usize; // First operand
 
         let immflag = instruction >> 5 & 0x1; // Determines second operand
         let operand = {
             if immflag == 1 {
                 sign_extend(instruction & 0x1f, 5)
             } else {
-                let sr2 = instruction & 0x7;
-                self.registers[sr2 as usize]
+                let sr2 = (instruction & 0x7) as usize;
+                self.register[sr2]
             }
         };
 
-        self.registers[destination_register as usize] = {
-            self.registers[sr1 as usize] & operand
+        self.register[destination_register] = {
+            self.register[sr1] & operand
         };
 
-        self.update_rcond(destination_register as usize);
+        self.update_rcond(destination_register);
     }
 }

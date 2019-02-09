@@ -7,15 +7,15 @@ const POSITIVE_NUM: u16 = 0b0111111111111111;
 #[test]
 fn and() {
     let mut lc3 = LC3::new();
-    lc3.registers[0] = 0b11111;
+    lc3.register[0] = 0b11111;
 
     let instruction = 0b0101_000_000_1_01010;
     lc3.and(instruction);
 
-    assert_eq!(lc3.registers[0], 0b01010);
+    assert_eq!(lc3.register[0], 0b01010);
 
     lc3.and(instruction);
-    assert_eq!(lc3.registers[0], 0b01010);
+    assert_eq!(lc3.register[0], 0b01010);
     // Running the same instruction should produce the same results
 }
 
@@ -32,14 +32,14 @@ fn ldi() {
     // Hence load "indirect"
 
     lc3.ldi(instruction);
-    assert_eq!(lc3.registers[0], 123);
+    assert_eq!(lc3.register[0], 123);
 
     lc3.memory[0x3001] = 501;
     lc3.memory[501] = 1234;
     let instruction: u16 = 0b1010_000_000000001;
 
     lc3.ldi(instruction);
-    assert_eq!(lc3.registers[0], 1234);
+    assert_eq!(lc3.register[0], 1234);
 }
 
 #[test]
@@ -49,13 +49,13 @@ fn add() {
     // 15 + 0
     let instruction: u16 = 0b0001_000_001_1_01111;
     lc3.add(instruction);
-    assert_eq!(lc3.registers[0], 15);
+    assert_eq!(lc3.register[0], 15);
     assert_eq!(FL::from(&lc3), FL::POS);
 
     // 15 + 15
     let instruction: u16 = 0b0001_001_000_0_00_000;
     lc3.add(instruction);
-    assert_eq!(lc3.registers[1], 30);
+    assert_eq!(lc3.register[1], 30);
     assert_eq!(FL::from(&lc3), FL::POS);
 }
 
@@ -92,12 +92,12 @@ fn flag_setting() {
     assert_eq!(FL::from(&lc3), FL::ZRO);
 
     // Test NEG
-    lc3.registers[0] = NEGATIVE_NUM;
+    lc3.register[0] = NEGATIVE_NUM;
     lc3.update_rcond(0);
     assert_eq!(FL::from(&lc3), FL::NEG);
 
     // Test POS
-    lc3.registers[0] = POSITIVE_NUM;
+    lc3.register[0] = POSITIVE_NUM;
     lc3.update_rcond(0);
     assert_eq!(FL::from(&lc3), FL::POS);
 }
