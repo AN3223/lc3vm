@@ -3,6 +3,22 @@ use lc3vm::*;
 const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
 
+
+#[test]
+fn and() {
+    let mut lc3 = LC3::new();
+    lc3.registers[0] = 0b11111;
+
+    let instruction = 0b0101_000_000_1_01010;
+    lc3.and(instruction);
+
+    assert_eq!(lc3.registers[0], 0b01010);
+
+    lc3.and(instruction);
+    assert_eq!(lc3.registers[0], 0b01010);
+    // Running the same instruction should produce the same results
+}
+
 #[test]
 fn ldi() {
     let mut lc3 = LC3::new();
