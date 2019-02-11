@@ -88,7 +88,7 @@ fn add() {
     let mut lc3 = LC3::new();
 
     // 15 + 0
-    let instruction: u16 = 0b0001_000_001_1_01111;
+    let instruction: u16 = 0b0001_000_000_1_01111;
     lc3.add(instruction);
     assert_eq!(lc3.register[0], 15);
     assert_eq!(FL::from(&lc3), FL::POS);
@@ -98,6 +98,24 @@ fn add() {
     lc3.add(instruction);
     assert_eq!(lc3.register[1], 30);
     assert_eq!(FL::from(&lc3), FL::POS);
+
+    // 30 - 15
+    let instruction: u16 = 0b0001_001_001_1_10001;
+    lc3.add(instruction);
+    assert_eq!(lc3.register[1], 15);
+    assert_eq!(FL::from(&lc3), FL::POS);
+
+    // 15 - 15
+    let instruction: u16 = 0b0001_001_001_1_10001;
+    lc3.add(instruction);
+    assert_eq!(lc3.register[1], 0);
+    assert_eq!(FL::from(&lc3), FL::ZRO);
+
+    // 0 - 15
+    let instruction: u16 = 0b0001_001_001_1_10001;
+    lc3.add(instruction);
+    assert_eq!(lc3.register[1], 65521);
+    assert_eq!(FL::from(&lc3), FL::NEG);
 }
 
 
