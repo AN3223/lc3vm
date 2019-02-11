@@ -1,7 +1,21 @@
 use lc3vm::*;
+use Register::*;
 
 const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
+
+#[test]
+fn br() {
+    let mut lc3 = LC3::new();
+    lc3.add(0b0001_000_000_1_00001);
+    // Just adding 1 to the 0th register to make RCOND POS
+
+    let instruction = 0b0000_001_000000001;
+    lc3.br(instruction);
+    // Should increment RPC to 0x3001 since RCOND is POS
+
+    assert_eq!(lc3.register[RPC as usize], 0x3001);
+}
 
 #[test]
 fn not() {

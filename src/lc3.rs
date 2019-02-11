@@ -110,7 +110,7 @@ impl LC3 {
         let pcoffset = sign_extend(instruction & 0x1ff, 9);
         let cond_flag = instruction >> 9 & 7;
 
-        if cond_flag & self.register[RCOND as usize] == 1 {
+        if cond_flag & self.register[RCOND as usize] != 0 {
             self.register[RPC as usize] += pcoffset;
         }
     }
