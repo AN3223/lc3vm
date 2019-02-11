@@ -56,7 +56,7 @@ impl LC3 {
 
         // Here's where the actual addition happens
         self.register[destination_register] = {
-            self.register[sr1] + operand
+            self.register[sr1].wrapping_add(operand)
         };
 
         self.update_rcond(destination_register);
@@ -68,7 +68,7 @@ impl LC3 {
         let destination_register = instruction >> 9 & 0x7;
 
         let location = self.get_memory(
-            (self.register[RPC as usize] + pcoffset) as usize
+            (self.register[RPC as usize].wrapping_add(pcoffset)) as usize
         );
 
         self.register[destination_register as usize] = self.get_memory(location as usize);
@@ -111,7 +111,10 @@ impl LC3 {
         let cond_flag = instruction >> 9 & 7;
 
         if cond_flag & self.register[RCOND as usize] != 0 {
-            self.register[RPC as usize] += pcoffset;
+            // Increment RPC
+            self.register[RPC as usize] = {
+                self.register[RPC as usize].wrapping_add(pcoffset)
+            };
         }
     }
 }
