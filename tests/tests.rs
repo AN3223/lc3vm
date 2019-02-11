@@ -106,13 +106,11 @@ fn add() {
     assert_eq!(FL::from(&lc3), FL::POS);
 
     // 15 - 15
-    let instruction: u16 = 0b0001_001_001_1_10001;
     lc3.add(instruction);
     assert_eq!(lc3.register[1], 0);
     assert_eq!(FL::from(&lc3), FL::ZRO);
 
     // 0 - 15
-    let instruction: u16 = 0b0001_001_001_1_10001;
     lc3.add(instruction);
     assert_eq!(lc3.register[1], 65521);
     assert_eq!(FL::from(&lc3), FL::NEG);
