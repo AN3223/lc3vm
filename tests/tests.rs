@@ -15,6 +15,22 @@ fn br() {
     // Should increment RPC to 0x3001 since RCOND is POS
 
     assert_eq!(lc3.register[RPC as usize], 0x3001);
+
+    lc3.add(0b0001_000_000_1_11111);
+
+    let instruction = 0b0000_010_000000001;
+    lc3.br(instruction);
+
+    assert_eq!(lc3.register[RPC as usize], 0x3002);
+    // Should increment RPC again since RCOND is ZRO
+
+    lc3.add(0b0001_000_000_1_11111);
+
+    let instruction = 0b0000_100_000000001;
+    lc3.br(instruction);
+
+    assert_eq!(lc3.register[RPC as usize], 0x3003);
+    // Should increment RPC again since RCOND is NEG
 }
 
 #[test]
