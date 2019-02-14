@@ -13,12 +13,10 @@ use std::time::Duration;
 pub const U16_MAX: usize = 1 << 16;
 
 // All registers
-pub enum Register {
-    RR0, RR1, RR2, RR3, RR4,
-    RR5, RR6, RR7, RPC, RCOND
+pub enum R {
+    R0, R1, R2, R3, R4,
+    R5, R6, R7, PC, COND
 }
-
-use Register::*;
 
 // All opcodes
 pub enum OP {
@@ -37,7 +35,7 @@ pub enum FL {
 // Makes it easier to check the RCOND
 impl From<&LC3> for FL {
     fn from(lc3: &LC3) -> FL {
-        match lc3.register[RCOND as usize] {
+        match lc3.register[R::COND as usize] {
             1 => FL::POS,
             2 => FL::ZRO,
             4 => FL::NEG,

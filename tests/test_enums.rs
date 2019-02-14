@@ -1,20 +1,19 @@
 use lc3vm::*;
-use lc3vm::Register::*;
 
 // Tests that the Register enums
 // correctly cast into u16 values
 #[test]
 fn registers_as_u16() {
-    assert_eq!(RR0 as u16,   0);
-    assert_eq!(RR1 as u16,   1);
-    assert_eq!(RR2 as u16,   2);
-    assert_eq!(RR3 as u16,   3);
-    assert_eq!(RR4 as u16,   4);
-    assert_eq!(RR5 as u16,   5);
-    assert_eq!(RR6 as u16,   6);
-    assert_eq!(RR7 as u16,   7);
-    assert_eq!(RPC as u16,   8);
-    assert_eq!(RCOND as u16, 9);
+    assert_eq!(R::R0 as u16,   0);
+    assert_eq!(R::R1 as u16,   1);
+    assert_eq!(R::R2 as u16,   2);
+    assert_eq!(R::R3 as u16,   3);
+    assert_eq!(R::R4 as u16,   4);
+    assert_eq!(R::R5 as u16,   5);
+    assert_eq!(R::R6 as u16,   6);
+    assert_eq!(R::R7 as u16,   7);
+    assert_eq!(R::PC as u16,   8);
+    assert_eq!(R::COND as u16, 9);
 }
 
 // Tests that the opcodes correctly

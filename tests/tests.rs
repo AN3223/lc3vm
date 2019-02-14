@@ -1,5 +1,4 @@
 use lc3vm::*;
-use Register::*;
 
 const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
@@ -64,31 +63,31 @@ fn jsr() {
     let instruction = 0b0100_1_00000000001;
     lc3.jsr(instruction);
 
-    assert_eq!(lc3.register[RR7 as usize], 0x3000);
+    assert_eq!(lc3.register[R::R7 as usize], 0x3000);
     // Test that RR7 was correctly set
-    assert_eq!(lc3.register[RPC as usize], 0x3001);
-    // Test that RPC was correctly incremented
+    assert_eq!(lc3.register[R::PC as usize], 0x3001);
+    // Test that PC was correctly incremented
 
     let instruction = 0b0100_0_00_111_000000;
     lc3.jsr(instruction);
 
-    assert_eq!(lc3.register[RR7 as usize], 0x3001);
+    assert_eq!(lc3.register[R::R7 as usize], 0x3001);
     // Test that RR7 was correctly set to the result of the last operation
-    assert_eq!(lc3.register[RPC as usize], 0x3001);
-    // Test that RPC was correctly set to the contents of BaseR
+    assert_eq!(lc3.register[R::PC as usize], 0x3001);
+    // Test that PC was correctly set to the contents of BaseR
 }
 
 #[test]
 fn jmp() {
     let mut lc3 = LC3::new();
-    lc3.register[RR4 as usize] = 500;
+    lc3.register[R::R4 as usize] = 500;
 
     let instruction = 0b1100_000_100_000000;
     // Set program counter to the contents of RR4
 
     lc3.jmp(instruction);
     assert_eq!(
-        lc3.register[RPC as usize],
+        lc3.register[R::PC as usize],
         500
     )
 }
@@ -97,29 +96,29 @@ fn jmp() {
 fn br() {
     let mut lc3 = LC3::new();
     lc3.add(0b0001_000_000_1_00001);
-    // Just adding 1 to the 0th register to make RCOND POS
+    // Just adding 1 to the 0th register to make COND POS
 
     let instruction = 0b0000_001_000000001;
     lc3.br(instruction);
-    // Should increment RPC to 0x3001 since RCOND is POS
+    // Should increment PC to 0x3001 since COND is POS
 
-    assert_eq!(lc3.register[RPC as usize], 0x3001);
+    assert_eq!(lc3.register[R::PC as usize], 0x3001);
 
     lc3.add(0b0001_000_000_1_11111);
 
     let instruction = 0b0000_010_000000001;
     lc3.br(instruction);
 
-    assert_eq!(lc3.register[RPC as usize], 0x3002);
-    // Should increment RPC again since RCOND is ZRO
+    assert_eq!(lc3.register[R::PC as usize], 0x3002);
+    // Should increment PC again since COND is ZRO
 
     lc3.add(0b0001_000_000_1_11111);
 
     let instruction = 0b0000_100_000000001;
     lc3.br(instruction);
 
-    assert_eq!(lc3.register[RPC as usize], 0x3003);
-    // Should increment RPC again since RCOND is NEG
+    assert_eq!(lc3.register[R::PC as usize], 0x3003);
+    // Should increment PC again since COND is NEG
 }
 
 #[test]
@@ -156,7 +155,7 @@ fn ldi() {
     lc3.memory[500] = 123;
 
     let instruction: u16 = 0b1010_000_000000000;
-    // Tells the machine to look at memory address 0x3000 (the default RPC value),
+    // Tells the machine to look at memory address 0x3000 (the default PC value),
     // and then to look at the memory address stored within memory address 0x3000,
     // and then store that value within the destination register (zero).
     // Hence load "indirect"
@@ -234,17 +233,17 @@ fn flag_setting() {
     let mut lc3 = LC3::new();
     
     // Test ZRO
-    lc3.update_rcond(0);
+    lc3.update_cond(0);
     assert_eq!(FL::from(&lc3), FL::ZRO);
 
     // Test NEG
     lc3.register[0] = NEGATIVE_NUM;
-    lc3.update_rcond(0);
+    lc3.update_cond(0);
     assert_eq!(FL::from(&lc3), FL::NEG);
 
     // Test POS
     lc3.register[0] = POSITIVE_NUM;
-    lc3.update_rcond(0);
+    lc3.update_cond(0);
     assert_eq!(FL::from(&lc3), FL::POS);
 }
 
