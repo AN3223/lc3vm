@@ -122,4 +122,22 @@ impl LC3 {
         let base_r = instruction >> 6 & 0x7;
         self.register[RPC as usize] = base_r;
     }
+
+    pub fn jsr(&mut self, instruction: u16) {
+        let flag = instruction >> 11 & 0x1;
+        
+        self.register[RR7 as usize] = self.register[RPC as usize];
+
+        if flag == 1 {
+            let pcoffset = sign_extend(instruction & 0x7ff, 11);
+
+            // Increment RPC
+            self.register[RPC as usize] = {
+                self.register[RPC as usize].wrapping_add(pcoffset)
+            }
+        } else {
+            let base_r = instruction >> 6 & 0x7;
+            self.register[RPC as usize] = base_r;
+        }
+    }
 }
