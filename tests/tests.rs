@@ -5,6 +5,19 @@ const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
 
 #[test]
+fn jmp() {
+    let mut lc3 = LC3::new();
+    let instruction = 0b1100_000_100_000000;
+    // Set program counter to 4
+
+    lc3.jmp(instruction);
+    assert_eq!(
+        lc3.register[RPC as usize],
+        4
+    )
+}
+
+#[test]
 fn br() {
     let mut lc3 = LC3::new();
     lc3.add(0b0001_000_000_1_00001);
