@@ -117,4 +117,9 @@ impl LC3 {
             };
         }
     }
+
+    pub fn jmp(&mut self, instruction: u16) {
+        let base_r = instruction >> 6 & 0x7;
+        self.register[RPC as usize] = base_r;
+    }
 }
