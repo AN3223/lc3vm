@@ -5,6 +5,17 @@ const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
 
 #[test]
+fn ldr() {
+    let mut lc3 = LC3::new();
+    lc3.register[1] = 50;
+    lc3.memory[51] = 500;
+    
+    let instruction = 0b0110_000_001_000001;
+    lc3.ldr(instruction);
+    assert_eq!(lc3.register[0], 500);
+}
+
+#[test]
 fn ld() {
     let mut lc3 = LC3::new();
     lc3.memory[0x3001] = 500;
