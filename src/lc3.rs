@@ -164,4 +164,15 @@ impl LC3 {
 
         self.update_rcond(destination_register);
     }
+
+    pub fn lea(&mut self, instruction: u16) {
+        let destination_register = (instruction >> 9 & 0x7) as usize;
+        let pcoffset = sign_extend(instruction & 0x1ff, 9);
+
+        let pc_incremented = pcoffset + self.register[RPC as usize];
+
+        self.register[destination_register as usize] = pc_incremented;
+
+        self.update_rcond(destination_register);
+    }
 }
