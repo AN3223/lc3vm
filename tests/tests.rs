@@ -6,13 +6,13 @@ const POSITIVE_NUM: u16 = 0b0111111111111111;
 #[test]
 fn sti() {
     let mut lc3 = LC3::new();
-    lc3.memory[0x3001] = 500;
+    lc3.memory.set(0x3001, 500);
     lc3.register[0] = 1000;
 
     let instruction = 0b1011_000_000000001;
     lc3.sti(instruction);
 
-    assert_eq!(lc3.memory[500], 1000);
+    assert_eq!(lc3.memory.contents[500], 1000);
 }
 
 #[test]
@@ -23,7 +23,7 @@ fn st() {
     let instruction = 0b0011_000_000000001;
     lc3.st(instruction);
 
-    assert_eq!(lc3.memory[0x3001], 500);
+    assert_eq!(lc3.memory.contents[0x3001], 500);
 }
 
 #[test]
@@ -39,7 +39,7 @@ fn lea() {
 fn ldr() {
     let mut lc3 = LC3::new();
     lc3.register[1] = 50;
-    lc3.memory[51] = 500;
+    lc3.memory.set(51, 500);
     
     let instruction = 0b0110_000_001_000001;
     lc3.ldr(instruction);
@@ -49,7 +49,7 @@ fn ldr() {
 #[test]
 fn ld() {
     let mut lc3 = LC3::new();
-    lc3.memory[0x3001] = 500;
+    lc3.memory.set(0x3001, 500);
     
     let instruction = 0b0010_000_00000001;
     lc3.ld(instruction);
@@ -151,8 +151,8 @@ fn and() {
 #[test]
 fn ldi() {
     let mut lc3 = LC3::new();
-    lc3.memory[0x3000] = 500;
-    lc3.memory[500] = 123;
+    lc3.memory.set(0x3000, 500);
+    lc3.memory.set(500, 123);
 
     let instruction: u16 = 0b1010_000_000000000;
     // Tells the machine to look at memory address 0x3000 (the default PC value),
@@ -163,8 +163,8 @@ fn ldi() {
     lc3.ldi(instruction);
     assert_eq!(lc3.register[0], 123);
 
-    lc3.memory[0x3001] = 501;
-    lc3.memory[501] = 1234;
+    lc3.memory.set(0x3001, 501);
+    lc3.memory.set(501, 1234);
     let instruction: u16 = 0b1010_000_000000001;
 
     lc3.ldi(instruction);

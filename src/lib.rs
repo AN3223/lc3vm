@@ -1,13 +1,6 @@
 mod lc3;
+pub mod memory;
 pub use lc3::LC3;
-
-extern crate termios;
-use std::io;
-use std::io::{Read};
-use termios::{Termios, TCSANOW, ECHO, ICANON, tcsetattr};
-use std::sync::mpsc::{Sender, channel};
-use std::thread;
-use std::time::Duration;
 
 // Maximum possible value to store within a u16
 pub const U16_MAX: usize = 1 << 16;
@@ -86,52 +79,4 @@ pub fn sign_extend(x: u16, bit_count: u16) -> u16 {
 // Short for is_negative(x, 16)
 pub const fn is_negative_u16(x: u16) -> bool {
     is_negative(x, 16)
-}
-
-const STDIN_FD: i32 = 0;
-
-pub fn get_key(tx: &mut Sender<u16>) {
-    let mut buffer = [0];
-    io::stdin().read_exact(&mut buffer).unwrap();
-    // Reads a single character to the buffer from STDIN
-
-    // Puts the character in the Sender so check_key() can use it
-    tx.send(buffer[0] as u16).ok();
-    // Ignores any send errors, doesn't matter
-    // if the other end gets anything
-}
-
-pub fn check_key() -> u16 {
-    let termios = Termios::from_fd(STDIN_FD).unwrap();
-    // STDIN's original state
-    
-    let mut new_termios = termios.clone();
-    // STDIN's new state that will be modified
-
-    new_termios.c_lflag &= !(ICANON | ECHO);
-    tcsetattr(STDIN_FD, TCSANOW, &new_termios).unwrap();
-    // Sets up the terminal to be able to
-    // give individual characters w/o linebreaks
-
-    let (mut tx, rx) = channel();
-    thread::spawn(move || {
-        get_key(&mut tx)
-    }); // TODO: Implement this as a daemon?
-    // Spawn get_key() in a new thread
-
-    let timeout = Duration::from_millis(50);
-    let key = rx.recv_timeout(timeout);
-    // Considers get_key() failed if the Receiver is empty when the timeout is over
-    // so the program will not hang forever waiting input
-    
-    tcsetattr(STDIN_FD, TCSANOW, &termios).unwrap();
-    // Return STDIN to its original state,
-    // regardless of get_key()'s result
-
-    match key {
-        Ok(character) => character,
-        Err(_) => 0
-    }
-    // Returns 0 if get_key() failed.
-    // This is intended because 0 represents NULL in ASCII.
 }

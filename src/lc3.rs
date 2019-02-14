@@ -1,20 +1,18 @@
 /* https://justinmeiners.github.io/lc3-vm/supplies/lc3-isa.pdf */
 
-use crate::{U16_MAX, FL, sign_extend, check_key, MR, R};
+use crate::{FL, sign_extend, R};
+use crate::memory::Memory;
 
 // Represents the whole LC-3
 pub struct LC3 {
-    pub memory: [u16; U16_MAX],
+    pub memory: Memory,
     pub register: [u16; 10]
 }
 
 impl LC3 {
     pub const fn new() -> LC3 {
         LC3 {
-            memory: [0; U16_MAX],
-            // TODO: Make the "memory" field into its own type,
-            // so the LC3 struct doesn't need to contain the getter
-            // for the memory.
+            memory: Memory::new(),
             register: [0,0,0,0,0,0,0,0,0x3000,0]
         }
     }
@@ -23,25 +21,6 @@ impl LC3 {
     pub fn update_cond(&mut self, register: usize) {
         let register_val = self.register[register];
         self.register[R::COND as usize] = FL::from(register_val) as u16;
-    }
-
-    // Getter for accessing the memory. The memory only
-    // needs to be accessed through this getter if the
-    // address could be MR::KBSR.
-
-    // Otherwise, directly indexing into the memory is
-    // perfectly acceptable.
-    pub fn get_memory(&mut self, address: usize) -> u16 {
-        if address == MR::KBSR as usize {
-            let key = check_key();
-            if key != 0 {
-                self.memory[MR::KBSR as usize] = 1 << 15;
-                self.memory[MR::KBDR as usize] = key;
-            } else {
-                self.memory[MR::KBSR as usize] = 0;
-            }
-        }
-        self.memory[address]
     }
 
     pub fn add(&mut self, instruction: u16) {
@@ -71,11 +50,11 @@ impl LC3 {
         let pcoffset = sign_extend(instruction & 0x1ff, 9);
         let destination_register = instruction >> 9 & 0x7;
 
-        let location = self.get_memory(
+        let location = self.memory.get(
             (self.register[R::PC as usize].wrapping_add(pcoffset)) as usize
         );
 
-        self.register[destination_register as usize] = self.get_memory(location as usize);
+        self.register[destination_register as usize] = self.memory.get(location as usize);
 
         self.update_cond(destination_register as usize);
     }
@@ -150,7 +129,7 @@ impl LC3 {
         let destination_register = (instruction >> 9 & 0x7) as usize;
 
         let pc_incremented = self.register[R::PC as usize] + pcoffset;
-        self.register[destination_register] = self.get_memory(pc_incremented as usize);
+        self.register[destination_register] = self.memory.get(pc_incremented as usize);
 
         self.update_cond(destination_register);
     }
@@ -161,7 +140,7 @@ impl LC3 {
         let offset = sign_extend(instruction & 0x3f, 6);
 
         self.register[destination_register] = {
-            self.get_memory(
+            self.memory.get(
                 (self.register[base_r] + offset) as usize
             )
         };
@@ -184,7 +163,7 @@ impl LC3 {
         let pcoffset = sign_extend(instruction & 0x1f, 9);
         let pc_incremented = self.register[R::PC as usize] + pcoffset;
 
-        self.memory[pc_incremented as usize] = self.register[sr];
+        self.memory.set(pc_incremented as usize, self.register[sr]);
     }
 
     pub fn sti(&mut self, instruction: u16) {
@@ -192,7 +171,7 @@ impl LC3 {
         let pcoffset = sign_extend(instruction & 0x1ff, 9);
         let pc_incremented = pcoffset + self.register[R::PC as usize];
 
-        let location = self.get_memory(pc_incremented as usize);
-        self.memory[location as usize] = self.register[sr];
+        let location = self.memory.get(pc_incremented as usize);
+        self.memory.set(location as usize, self.register[sr]);
     }
 }
