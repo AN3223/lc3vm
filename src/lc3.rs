@@ -1,3 +1,5 @@
+/* https://justinmeiners.github.io/lc3-vm/supplies/lc3-isa.pdf */
+
 use crate::{U16_MAX, RCOND, FL, sign_extend, check_key, MR, Register};
 use Register::*;
 
@@ -170,9 +172,16 @@ impl LC3 {
         let pcoffset = sign_extend(instruction & 0x1ff, 9);
 
         let pc_incremented = pcoffset + self.register[RPC as usize];
-
         self.register[destination_register as usize] = pc_incremented;
 
         self.update_rcond(destination_register);
+    }
+
+    pub fn st(&mut self, instruction: u16) {
+        let sr = (instruction >> 9 & 0x7) as usize;
+        let pcoffset = sign_extend(instruction & 0x1f, 9);
+        let pc_incremented = self.register[RPC as usize] + pcoffset;
+
+        self.memory[pc_incremented as usize] = self.register[sr];
     }
 }
