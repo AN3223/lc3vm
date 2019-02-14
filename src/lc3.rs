@@ -154,7 +154,7 @@ impl LC3 {
     pub fn ldr(&mut self, instruction: u16) {
         let destination_register = (instruction >> 9 & 0x7) as usize;
         let base_r = (instruction >> 6 & 0x7) as usize;
-        let offset = sign_extend(instruction & 0x1f, 6);
+        let offset = sign_extend(instruction & 0x3f, 6);
 
         self.register[destination_register] = {
             self.get_memory(
