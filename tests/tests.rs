@@ -5,6 +5,18 @@ const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
 
 #[test]
+fn sti() {
+    let mut lc3 = LC3::new();
+    lc3.memory[0x3001] = 500;
+    lc3.register[0] = 1000;
+
+    let instruction = 0b1011_000_000000001;
+    lc3.sti(instruction);
+
+    assert_eq!(lc3.memory[500], 1000);
+}
+
+#[test]
 fn st() {
     let mut lc3 = LC3::new();
     lc3.register[0] = 500;
