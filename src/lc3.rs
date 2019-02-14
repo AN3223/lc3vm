@@ -143,11 +143,23 @@ impl LC3 {
 
     pub fn ld(&mut self, instruction: u16) {
         let pcoffset = sign_extend(instruction & 0xff, 9);
-        let destination_register = instruction >> 9 & 0x7;
+        let destination_register = (instruction >> 9 & 0x7) as usize;
 
         let pc_incremented = self.register[RPC as usize] + pcoffset;
-        self.register[destination_register as usize] = self.get_memory(pc_incremented as usize);
+        self.register[destination_register] = self.get_memory(pc_incremented as usize);
 
-        self.update_rcond(destination_register as usize);
+        self.update_rcond(destination_register);
+    }
+
+    pub fn ldr(&mut self, instruction: u16) {
+        let destination_register = (instruction >> 9 & 0x7) as usize;
+        let base_r = instruction >> 6 & 0x7;
+        let offset = sign_extend(instruction & 0x1f, 6);
+
+        self.register[destination_register] = {
+            self.get_memory((base_r + offset) as usize)
+        };
+
+        self.update_rcond(destination_register);
     }
 }
