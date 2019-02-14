@@ -31,20 +31,22 @@ fn jsr() {
 
     assert_eq!(lc3.register[RR7 as usize], 0x3001);
     // Test that RR7 was correctly set to the result of the last operation
-    assert_eq!(lc3.register[RPC as usize], 7);
-    // Test that RPC was correctly set to BaseR
+    assert_eq!(lc3.register[RPC as usize], 0x3001);
+    // Test that RPC was correctly set to the contents of BaseR
 }
 
 #[test]
 fn jmp() {
     let mut lc3 = LC3::new();
+    lc3.register[RR4 as usize] = 500;
+
     let instruction = 0b1100_000_100_000000;
-    // Set program counter to 4
+    // Set program counter to the contents of RR4
 
     lc3.jmp(instruction);
     assert_eq!(
         lc3.register[RPC as usize],
-        4
+        500
     )
 }
 

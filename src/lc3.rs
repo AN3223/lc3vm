@@ -119,8 +119,8 @@ impl LC3 {
     }
 
     pub fn jmp(&mut self, instruction: u16) {
-        let base_r = instruction >> 6 & 0x7;
-        self.register[RPC as usize] = base_r;
+        let base_r = (instruction >> 6 & 0x7) as usize;
+        self.register[RPC as usize] = self.register[base_r];
     }
 
     pub fn jsr(&mut self, instruction: u16) {
@@ -136,8 +136,8 @@ impl LC3 {
                 self.register[RPC as usize].wrapping_add(pcoffset)
             }
         } else {
-            let base_r = instruction >> 6 & 0x7;
-            self.register[RPC as usize] = base_r;
+            let base_r = (instruction >> 6 & 0x7) as usize;
+            self.register[RPC as usize] = self.register[base_r];
         }
     }
 
@@ -153,11 +153,13 @@ impl LC3 {
 
     pub fn ldr(&mut self, instruction: u16) {
         let destination_register = (instruction >> 9 & 0x7) as usize;
-        let base_r = instruction >> 6 & 0x7;
+        let base_r = (instruction >> 6 & 0x7) as usize;
         let offset = sign_extend(instruction & 0x1f, 6);
 
         self.register[destination_register] = {
-            self.get_memory((base_r + offset) as usize)
+            self.get_memory(
+                (self.register[base_r] + offset) as usize
+            )
         };
 
         self.update_rcond(destination_register);
