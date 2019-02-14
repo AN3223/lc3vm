@@ -5,6 +5,15 @@ const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
 
 #[test]
+fn lea() {
+    let mut lc3 = LC3::new();
+    let instruction = 0b1110_000_000000001;
+    
+    lc3.lea(instruction);
+    assert_eq!(lc3.register[0], 0x3001);
+}
+
+#[test]
 fn ldr() {
     let mut lc3 = LC3::new();
     lc3.register[1] = 50;
