@@ -5,6 +5,26 @@ const NEGATIVE_NUM: u16 = 0b1111111111111111;
 const POSITIVE_NUM: u16 = 0b0111111111111111;
 
 #[test]
+fn jsr() {
+    let mut lc3 = LC3::new();
+    let instruction = 0b0100_1_00000000001;
+    lc3.jsr(instruction);
+
+    assert_eq!(lc3.register[RR7 as usize], 0x3000);
+    // Test that RR7 was correctly set
+    assert_eq!(lc3.register[RPC as usize], 0x3001);
+    // Test that RPC was correctly incremented
+
+    let instruction = 0b0100_0_00_111_000000;
+    lc3.jsr(instruction);
+
+    assert_eq!(lc3.register[RR7 as usize], 0x3001);
+    // Test that RR7 was correctly set to the result of the last operation
+    assert_eq!(lc3.register[RPC as usize], 7);
+    // Test that RPC was correctly set to BaseR
+}
+
+#[test]
 fn jmp() {
     let mut lc3 = LC3::new();
     let instruction = 0b1100_000_100_000000;
